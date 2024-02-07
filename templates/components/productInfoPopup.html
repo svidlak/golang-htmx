@@ -1,0 +1,33 @@
+{{ define "product-info-popup" }}
+<div class="flex flex-col w-80 mr-5 mb-5 bg-white rounded-lg shadow dark:bg-gray-300">
+    <a href="#">
+        <img class="rounded-t-lg w-100 h-100 object-cover" src="{{ .Thumbnail }}" alt="" />
+    </a>
+    <div class="flex flex-col h-full p-5 justify-between">
+        <a href="#">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ .Title }}</h5>
+            <span>
+                {{ .Description }}
+            </span>
+        </a>
+        <div class="flex justify-between font-normal text-gray-700 dark:text-gray-800 mt-5">
+            <div class="flex flex-col">
+                <span>
+                    <span class="font-medium ">Price:</span> {{ .Price }}
+                </span>
+                <span>
+                    <span class="font-medium ">Discount:</span> {{ .DiscountPercentage }}
+                </span>
+            </div>
+            <div class="flex flex-col">
+                <span>
+                    <span class="font-medium ">Rating:</span> {{ .Rating }}
+                </span>
+                <span>
+                    <span class="font-medium ">Brand:</span> {{ .Brand }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

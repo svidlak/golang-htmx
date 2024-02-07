@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example</title>
+    <script src="https://unpkg.com/htmx.org@1.9.7"
+        integrity="sha384-EAzY246d6BpbWR7sQ8+WEm40J8c3dHFsqC58IgPlh4kMbRRI6P6WA+LA/qGAyAu8"
+        crossorigin="anonymous"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.css" rel="stylesheet" />
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .icon {
+            cursor: pointer;
+        }
+
+        .icon,
+        .text {
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        .show-on-tr-hover {
+            opacity: 0;
+        }
+
+        .hide-on-tr-hover {
+            opacity: 100;
+        }
+
+        tr:hover {
+            .show-on-tr-hover {
+                opacity: 100;
+            }
+
+            .hide-on-tr-hover {
+                width: 0;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white-100">
+
+    <div class="container mx-auto">
+        {{ template "header" }}
+        {{ template "error-toast" }}
+        <div class="flex py-4">
+            {{ template "search" }}
+        </div>
+        <div id="products-list-in-cart" class="flex flex-row flex-wrap">
+            {{ range . }}
+            {{ template "product-info-popup" . }}
+            {{ end }}
+        </div>
+        {{ template "footer" }}
+    </div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.js"></script>
+    <script>
+        const defaultError = "Oops, something went wrong";
+        const toast = document.getElementById("toast-top-right");
+        toast.style.display = "none"
+
+        document.body.addEventListener('htmx:responseError', function (event) {
+            const errorMessage = event?.detail?.xhr?.responseText
+            const [_, errorTextElement] = toast.childNodes
+            errorTextElement.innerText = errorMessage || defaultError
+
+            toast.style.display = "block"
+            setTimeout(() => toast.style.display = "none", 3000)
+        });
+    </script>
+</body>
+</html>

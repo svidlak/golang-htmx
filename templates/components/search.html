@@ -1,0 +1,126 @@
+{{ define "search" }}
+<input id="search-input" type="text" name="q" hx-get="/search" hx-trigger="keyup changed delay:500ms"
+    hx-target="#search-results" placeholder="Search..."
+    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+<div id="search-results"></div>
+
+<script>
+    function closeSearchResultsList() {
+        const searchResults = document.getElementById('search-results')
+        if (searchResults.children) {
+            const [popoverResults, popoverCatcher] = searchResults.children;
+            if (popoverResults) {
+                popoverResults.style.display = 'none'
+            }
+            if (popoverCatcher) {
+                popoverCatcher.style.display = 'none'
+            }
+        }
+    }
+
+    function openSearchResultsList() {
+        const searchResults = document.getElementById('search-results')
+        if (searchResults.children) {
+            const [popoverResults, popoverCatcher] = searchResults.children;
+            if (popoverResults) {
+                popoverResults.style.display = 'block'
+            }
+            if (popoverCatcher) {
+                popoverCatcher.style.display = 'block'
+            }
+        }
+    }
+    window.addEventListener("click", (event) => {
+        if (event.target.id === "popover-click-catcher") {
+            closeSearchResultsList()
+        }
+
+        if (event.target.id === "search-input") {
+            openSearchResultsList()
+        }
+    });
+</script>
+{{ end }}
+
+{{ define "search-results" }}
+<div data-popover id="popover-click" role="tooltip"
+    class="mt-5 w-96 absolute z-20 inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm">
+    {{ if len . }}
+    <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg">
+        <h3 class="font-semibold text-gray-900 dark:text-black text-center">Search Results ({{ len . }})</h3>
+    </div>
+    <div class="flex flex-col font-normal search-results-list">
+        {{ range . }}
+        {{ if .Disabled }}
+        {{ template "search-result-disabled" . }}
+        {{ else }}
+        {{ template "search-result" . }}
+        {{ end }}
+        {{ end }}
+    </div>
+    {{ else }}
+    <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg">
+        <h3 class="font-semibold text-gray-900 dark:text-black text-center">No results...</h3>
+    </div>
+    {{ end }}
+</div>
+<div id="popover-click-catcher" class="absolute top-0 z-10 h-full container" />
+
+<style>
+    .search-results-list {
+        max-height: 200px;
+        overflow-y: scroll;
+    }
+</style>
+{{ end }}
+
+{{ define "search-result" }}
+<div class="flex px-3 py-2 justify-between hover:cursor-pointer" hx-post="/product/{{ .Id }}" hx-trigger="click"
+    hx-target="#products-list-in-cart" hx-swap="beforeend" onclick="resetForm()">
+    <div>
+        <div class="popover-wrapper invisible lg:visible">
+            <span class="icon">
+                {{ template "informationIcon" }}
+            </span>
+            <div class="popover-default absolute bg-white hidden border border-gray-200 rounded-lg shadow-sm"
+                role="tooltip">
+                {{ template "product-info-popup" . }}
+            </div>
+        </div>
+    </div>
+    <div class="text-gray-100">|</div>
+    <div>{{ .Title }} </div>
+    <div class="text-gray-100">|</div>
+    <div>{{ .Brand }}</div>
+    <div class="text-gray-100">|</div>
+    <div>$ {{ .Price }}</div>
+</div>
+
+<script>
+    function resetForm() {
+        closeSearchResultsList()
+    }
+</script>
+{{ end }}
+
+{{ define "search-result-disabled" }}
+<div disabled class="flex px-3 py-2 justify-between cursor-not-allowed bg-gray-200">
+    <div>
+        <div class="popover-wrapper invisible lg:visible">
+            <span class="icon">
+                {{ template "informationIcon" }}
+            </span>
+            <div class="popover-default absolute bg-white hidden border border-gray-200 rounded-lg shadow-sm"
+                role="tooltip">
+                {{ template "product-info-popup" . }}
+            </div>
+        </div>
+    </div>
+    <div class="text-gray-100">|</div>
+    <div>{{ .Title }} </div>
+    <div class="text-gray-100">|</div>
+    <div>{{ .Brand }}</div>
+    <div class="text-gray-100">|</div>
+    <div>$ {{ .Price }}</div>
+</div>
+{{ end }}
